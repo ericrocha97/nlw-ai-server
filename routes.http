@@ -1,0 +1,44 @@
+@baseURL= http://localhost:3333
+
+# @name get-prompts
+GET {{baseURL}}/prompts
+
+
+###
+
+# @name upload-videos
+POST {{baseURL}}/videos
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="aws-s3.mp3"
+Content-Type: audio/mpeg
+
+< ./aws-s3.mp3
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+
+###
+
+@uuid= 10f76b21-9838-4c0a-8c4a-a21298e7015e
+
+# @name create-transcription
+
+POST {{baseURL}}/videos/{{uuid}}/transcription
+Content-Type: application/json
+
+{
+  "prompt": "aws, s3"
+}
+
+###
+
+# @name generate-ai-completion
+POST {{baseURL}}/ai/complete
+Content-Type: application/json
+
+{
+  "videoId": "{{uuid}}",
+  "temperature": 0.5,
+  "template": "Gere um resumo da transcrição do vídeo informada a seguir: '''{transcription}'''"
+}
